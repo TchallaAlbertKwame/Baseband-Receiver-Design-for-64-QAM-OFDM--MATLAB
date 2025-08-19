@@ -6,6 +6,15 @@ This repository contains a MATLAB implementation of the time–frequency synchro
 - MATLAB R2021a or newer (Signal Processing Toolbox recommended)
 - LaTeX distribution (MiKTeX or TeX Live) to build `report.tex`
 
+## 0. Environment setup (Windows)
+- Install MATLAB and optionally the Signal Processing Toolbox.
+- Install MiKTeX: https://miktex.org/download
+  - During first `pdflatex` run, allow on‑the‑fly package install.
+- Ensure `pdflatex` is on PATH (MiKTeX normally configures this). Verify in PowerShell:
+  ```powershell
+  pdflatex --version
+  ```
+
 ## 2. Files
 - `baseband4.m` — main MATLAB script that runs all experiments and prints logs.
 - `report.tex` — IEEE‑style LaTeX report. Includes figures from `1.png`–`4.png`.
@@ -43,6 +52,52 @@ EbN0 = 5:15;
 varSamples2 = [207.1295 249.0077 288.0967 332.1151 352.5372 361.7439 325.6827 285.0905 220.0823 155.7368 107.7118];
 semilogy(EbN0, varSamples2, '-o'); grid on; xlabel('Eb/N0 (dB)'); ylabel('Timing variance (samples^2)');
 saveas(gcf, '4.png');
+```
+
+## 4.1 Exact snippets for all figures
+
+1) Timing variance (Figure 4 → `4.png`)
+```matlab
+EbN0 = 5:15;
+varSamples2 = [207.1295 249.0077 288.0967 332.1151 352.5372 361.7439 325.6827 285.0905 220.0823 155.7368 107.7118];
+figure; semilogy(EbN0, varSamples2, '-o','LineWidth',1.5);
+grid on; xlabel('Eb/N0 (dB)'); ylabel('Timing variance (samples^2)');
+title('S&C timing variance vs Eb/N0');
+saveas(gcf, '4.png');
+```
+
+2) Channel estimation MSE (Figure 3 → `3.png`)
+```matlab
+EbN0 = 0:2:20;
+MSE_LS   = [16.482 10.038 6.2948 4.0490 2.5960 1.5835 1.0041 0.63143 0.40484 0.24808 0.15943];
+MSE_MMSE = [971.26 1430.0 2324.9 3622.9 5817.9 9079.7 14563 22760 35045 55662 90530];
+figure; semilogy(EbN0, MSE_LS, '-o','LineWidth',1.5); hold on;
+semilogy(EbN0, MSE_MMSE, '-s','LineWidth',1.5);
+grid on; xlabel('Eb/N0 (dB)'); ylabel('MSE'); legend('LS','MMSE','Location','southwest');
+title('Channel estimation MSE vs Eb/N0');
+saveas(gcf, '3.png');
+```
+
+3) BER vs SNR (Figure 2 → `2.png`)
+```matlab
+EbN0 = 0:2:20;
+BER_ZF   = [0.4894 0.4850 0.4759 0.4674 0.4510 0.4313 0.4082 0.3845 0.3553 0.3203 0.2889];
+BER_MMSE = [0.4893 0.4849 0.4760 0.4672 0.4505 0.4309 0.4082 0.3841 0.3552 0.3202 0.2887];
+figure; plot(EbN0, BER_ZF, '-o','LineWidth',1.5); hold on;
+plot(EbN0, BER_MMSE, '-s','LineWidth',1.5);
+grid on; xlabel('Eb/N0 (dB)'); ylabel('BER'); ylim([0.25 0.5]); legend('ZF','MMSE','Location','northwest');
+title('Uncoded BER vs Eb/N0');
+saveas(gcf, '2.png');
+```
+
+4) BER vs Doppler (Figure 1 → `1.png`)
+```matlab
+Doppler = [0 100 500 1000 2000];
+BER = [0.3652 0.3628 0.3601 0.3609 0.3688];
+figure; plot(Doppler, BER, '-o','LineWidth',1.5);
+grid on; xlabel('Doppler (Hz)'); ylabel('BER'); ylim([0.34 0.38]);
+title('BER vs Doppler');
+saveas(gcf, '1.png');
 ```
 
 ## 5. Building the report
